@@ -1,122 +1,83 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import './index.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [nome, setNome] = useState('');
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+  const [mostrarEndereco, setMostrarEndereco] = useState(false);
+
+  const lidarComResposta = async (status) => {
+    if (nome.trim() === '') {
+      alert('Por favor, digite seu nome completo antes de responder!');
+      return;
+    }
+
+    try {
+      const resposta = await fetch(`${import.meta.env.VITE_API_URL}/api/convidados`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: nome, statusPresenca: status })
+      });
+
+      if (resposta.ok) {
+        alert(`Obrigado, ${nome}! Sua resposta (${status}) foi registrada.`);
+        setNome('');
+        setMostrarFormulario(false);
+      } else {
+        alert('Ops! Tivemos um problema. Tente novamente.');
+      }
+    } catch (erro) {
+      alert('Erro de conexão! Verifique se o servidor está rodando.');
+      console.error(erro);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen flex items-center justify-center bg-[#E0E7EB] p-0">
 
-      <div className="ticks"></div>
+      <div
+        className="relative w-full max-w-md aspect-[3/4] bg-center bg-contain bg-no-repeat shadow-2xl"
+        style={{ backgroundImage: "url('/background moana.jpeg')" }}
+      >
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="absolute inset-0 grid grid-cols-2 grid-rows-10 z-50">
+          <div className="col-span-2 row-span-8"></div>
+          <div onClick={() => { setMostrarEndereco(true); setMostrarFormulario(false); }} className="row-span-2 col-span-1 cursor-pointer"></div>
+          <div onClick={() => { setMostrarFormulario(true); setMostrarEndereco(false); }} className="row-span-2 col-span-1 cursor-pointer"></div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {mostrarEndereco && (
+        <div className="absolute inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-white/95 p-6 rounded-2xl shadow-2xl text-left max-w-sm w-full backdrop-blur-sm border border-white/40 relative">
+            <button onClick={() => setMostrarEndereco(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 font-bold text-xl">&times;</button>
+            <h1 className="text-2xl font-bold text-teal-700 mb-4 font-serif">Local da Aventura:</h1>
+            <p className="text-gray-800 font-bold text-sm mb-2">Sweet Party Buffet Infantil</p>
+            <p className="text-gray-700 text-sm mb-4 leading-relaxed">Av. Brás de Pina, 1879 - Vista Alegre, Rio de Janeiro - RJ, 21235-603</p>
+            <button onClick={() => setMostrarEndereco(false)} className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg">Entendi!</button>
+          </div>
+        </div>
+      )}
+
+      {mostrarFormulario && (
+        <div className="absolute inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
+          <div className="bg-white/95 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full backdrop-blur-sm border border-white/40 relative">
+            <button onClick={() => setMostrarFormulario(false)} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 font-bold text-xl">&times;</button>
+            <h1 className="text-3xl font-bold text-teal-700 mb-2 font-serif">Vem com a gente!</h1>
+            <input
+              type="text" placeholder="Seu nome completo..." value={nome}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full mb-6 px-4 py-3 rounded-lg border border-gray-300"
+            />
+            <div className="flex flex-col gap-3">
+              <button onClick={() => lidarComResposta('CONFIRMADO')} className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-lg">Eu vou confirmar!</button>
+              <button onClick={() => lidarComResposta('RECUSADO')} className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg">Infelizmente não vou</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
