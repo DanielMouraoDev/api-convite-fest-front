@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
+import Admin from './Admin'; // Certifique-se de que o nome do arquivo seja exatamente Admin.jsx
 
-function App() {
+function Convite() {
   const [nome, setNome] = useState('');
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarEndereco, setMostrarEndereco] = useState(false);
@@ -34,12 +36,10 @@ function App() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#E0E7EB] p-0">
-
       <div
         className="relative w-full max-w-md aspect-[3/4] bg-center bg-contain bg-no-repeat shadow-2xl"
         style={{ backgroundImage: "url('/background moana.jpeg')" }}
       >
-
         <div className="absolute inset-0 grid grid-cols-2 grid-rows-10 z-50">
           <div className="col-span-2 row-span-8"></div>
           <div onClick={() => { setMostrarEndereco(true); setMostrarFormulario(false); }} className="row-span-2 col-span-1 cursor-pointer"></div>
@@ -77,6 +77,17 @@ function App() {
         </div>
       )}
     </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Convite />} />
+        <Route path="/admin" element={<Admin />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
