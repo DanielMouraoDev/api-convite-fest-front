@@ -1,37 +1,47 @@
 import { useEffect, useState } from 'react';
 
-function Admin() {
+export default function Admin() { // Adicionei 'export' aqui diretamente
   const [convidados, setConvidados] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/convidados`)
       .then(res => res.json())
-      .then(data => setConvidados(data))
-      .catch(err => console.error("Erro ao carregar:", err));
+      .then(data => {
+        setConvidados(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Erro ao carregar:", err);
+        setLoading(false);
+      });
   }, []);
 
   const deletar = async (id) => {
-    if (confirm("Remover este convidado da lista?")) {
-      await fetch(`${import.meta.env.VITE_API_URL}/api/convidados/${id}`, { method: 'DELETE' });
-      setConvidados(convidados.filter(c => c.id !== id));
+    if (window.confirm("Remover este convidado da lista?")) { // Use window.confirm para garantir compatibilidade
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL}/api/convidados/${id}`, { method: 'DELETE' });
+        setConvidados(convidados.filter(c => c.id !== id));
+      } catch (err) {
+        alert("Erro ao excluir convidado.");
+      }
     }
   };
 
-  // Lógica para filtrar e contar
   const confirmados = convidados.filter(c => c.statusPresenca === 'CONFIRMADO');
   const recusados = convidados.filter(c => c.statusPresenca === 'RECUSADO');
+
+  if (loading) return <div className="p-10 text-white text-center">Carregando dados...</div>;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-500 to-blue-600 p-6">
       <div className="max-w-md mx-auto bg-white/95 p-8 rounded-[2rem] shadow-2xl">
         <h1 className="text-3xl font-bold text-teal-800 mb-6 text-center">Painel do Moderador</h1>
 
-        {/* Contador Total */}
         <div className="bg-teal-100 p-4 rounded-2xl mb-6 text-center">
           <p className="text-teal-800 font-bold text-lg">Total Confirmados: {confirmados.length}</p>
         </div>
 
-        {/* Lista de Confirmados */}
         <h2 className="text-xl font-bold text-green-700 mb-4">Confirmados ({confirmados.length})</h2>
         <ul className="space-y-3 mb-8">
           {confirmados.map(c => (
@@ -42,7 +52,6 @@ function Admin() {
           ))}
         </ul>
 
-        {/* Lista de Recusados */}
         <h2 className="text-xl font-bold text-red-700 mb-4">Recusados ({recusados.length})</h2>
         <ul className="space-y-3">
           {recusados.map(c => (
@@ -56,5 +65,3 @@ function Admin() {
     </div>
   );
 }
-
-export default Admin;

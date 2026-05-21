@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
-import Admin from './Admin'; // Certifique-se de que o nome do arquivo seja exatamente Admin.jsx
 
-function Convite() {
+export default function App() {
   const [nome, setNome] = useState('');
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [mostrarEndereco, setMostrarEndereco] = useState(false);
@@ -79,16 +77,3 @@ function Convite() {
     </div>
   );
 }
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Convite />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-export default App;
